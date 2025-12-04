@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض خاص</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f9fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #1f2937; margin-bottom: 1.5rem; }
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; color: #374151; font-size: 0.875rem; }
+        input { width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; box-sizing: border-box; }
+        button { width: 100%; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; font-weight: bold; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
+        .success { display: none; text-align: center; color: #059669; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>اطلب الآن والدفع عند الاستلام</h2>
+        <form id="codForm">
+            <div class="input-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="input-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="input-group">
+                <label>العنوان / المدينة</label>
+                <input type="text" id="address">
+            </div>
+            <button type="submit" id="btn">تأكيد الطلب</button>
+        </form>
+        <div id="successMsg" class="success">تم استلام طلبك بنجاح! سنتصل بك قريباً.</div>
+    </div>
+
+    <script>
+        document.getElementById('codForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn');
+            btn.disabled = true;
+            btn.innerText = "جاري الإرسال...";
+
+            const data = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                product: "منتج تجريبي 1"
+            };
+
+            try {
+                const res = await fetch('/api/order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if(res.ok) {
+                    document.getElementById('codForm').style.display = 'none';
+                    document.getElementById('successMsg').style.display = 'block';
+                }
+            } catch (err) {
+                alert("حدث خطأ");
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
